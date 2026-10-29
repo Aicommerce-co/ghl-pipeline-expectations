@@ -185,70 +185,64 @@ reps_geo_moves.py      every 15 min  geo tags + status-tag → stage auto-move
                                      (full sweep + rank snapshot; NEVER demotes)
 state: reps_opp_map.json (11,910 contactId→oppId) · logs: /home/pedro/.hermes/ghl-sync/</div></details>
 
-<h2 id="flow"><span class="no">05</span>How a lead is born — dependency tree up to the HT</h2>
+<h2 id="flow"><span class="no">06</span>How a lead is born — dependency tree up to the HT</h2>
 <div class="small" style="margin-bottom:10px">Read top-down: every node depends on the one above it. Chips show who performs the step; <span class="kids">produces</span> chips show what each step hands to the next.</div>
 <ul class="tree">
 <li><div class="node">
   <div class="t">1 · Lead source — two doors <span class="auto">entry</span></div>
   <div class="d">Nothing downstream exists until a contact exists in GHL.</div>
-  <div class="meta"><span class="lbl">doors:</span>
-    <span>📢 Door A — funnels (virai.com/receptionist·/support·/sales·/seo·/media-buyer, build.aicommerce.co, free/dm.aiministores.com)</span>
-    <span>🚪 Door B — historical audiences (aud26 tags, bulk stock, no funnel)</span></div>
+  <div class="meta"><span class="lbl">doors:</span><span>📢 Door A — funnels (virai.com/receptionist · /support · /sales · /seo · /media-buyer · build.aicommerce.co · free/dm.aiministores.com)</span><span>🚪 Door B — historical audiences (aud26 tags, bulk stock, no funnel)</span></div>
 </div>
-  <ul>
-  <li><div class="node">
-    <div class="t">2 · Born as GHL contact + first tags + Lead fires <span class="auto">automatic</span></div>
-    <div class="d">Depends on: step 1. Performer: the funnel site's Netlify function (lead.mjs) — runs server-side on form submit.</div>
-    <div class="meta"><span class="kids">produces</span>
-      <span>GHL contact (upsert)</span><span>campaign tag: virai-* / aicom-* / aims-* / intl-* / aims-dm-*</span>
-      <span>Cortana webhook aicom_lead·aims_lead</span><span>Meta CAPI Lead</span>
-      <span class="lbl">= Peter's "upon first optin → lead fire"</span></div>
-    <div class="meta"><span class="lbl">Door B variant:</span><span>no function involved — contacts already exist with aud26 tags</span></div>
-  </div>
-    <ul>
-    <li><div class="node">
-      <div class="t">3 · Becomes a pipeline card <span class="auto">automatic · cron</span></div>
-      <div class="d">Depends on: the tags from step 2 (Door A) or the aud26 tag (Door B). Performer: two cron workers on Pedro's box.</div>
-      <div class="meta"><span class="lbl">workers:</span>
-        <span class="pill">ghl_pipeline_sync.py · 5 min → AIO Affiliate Funnel, stage "Opted in"</span>
-        <span class="pill">reps_backfill.py · 15 min → pipeline 05 "1 New", aud26 + +1 phone + never-bought only</span></div>
-      <div class="meta"><span class="kids">produces</span><span>11,910 cards (05) · 144+ opps (AIO) · dedupe via reps_opp_map.json</span>
-        <span class="lbl">cards are never created by hand — a tag appears, a card appears</span></div>
-    </div>
-      <ul>
-      <li><div class="node">
-        <div class="t">4 · Enrichment — country on the card <span class="auto">automatic · same worker</span></div>
-        <div class="d">Depends on: step 3 (a card exists) + phone prefix. geo-us / geo-uk / geo-br… stamped; 25,395 done. GHL's native country field is junk ('AE' on +1 numbers — verified).</div>
-        <div class="meta"><span class="kids">produces</span><span>visible country tag on every card = Peter's "quick information … including the country"</span></div>
-      </div></li>
-      <li><div class="node">
-        <div class="t">5 · Rep dials → tags the outcome <span class="human">human · GHL card, not Slack</span></div>
-        <div class="d">Depends on: steps 3+4 (an assigned, geo-tagged card). Peter's spec: "the card should be tagged appropriately… prob via smart tags" — Slack reactions were the pre-pipeline stopgap.</div>
-        <div class="meta"><span class="lbl">vocabulary:</span>
-          <span>✅ contacted→2</span><span>📵 no answer→3</span><span>💬 talked→4</span>
-          <span>🏪 store delivered→5</span><span>🤝 affiliate signup→6</span><span>⭐ ht qualified→7</span><span>🚫 lost dnc→8</span></div>
-        <div class="meta"><span class="kids">produces</span><span>card auto-moves stage (verified e2e)</span>
-          <span>overlap guard: tagged = taken</span><span>e2e-verified 1→2 on a live card</span></div>
-      </div>
-        <ul>
-        <li><div class="node">
-          <div class="t">6 · Funnel conversions ladder <span class="mixed">mixed · auto events + rep tags</span></div>
-          <div class="d">Depends on: step 5 momentum. Peter's ladder: opt-in → Lead · redeem link → Redeem page · Wix/Base44 signup → Bought affiliate · access delivered → Access.</div>
-          <div class="meta"><span class="gapk">gap</span><span>Redeem page stage NOT wired — needs per-lead redeem links (campaign sharedid only today) — Peter's decision</span></div>
-        </div></li>
-        <li><div class="node">
-          <div class="t">7 · HT handoff → the closer's world <span class="human">human · stage 7 → HT Sales pipeline</span></div>
-          <div class="d">Depends on: qualification (application / income override / $250 signup). Card to "7. HT qualified → closer" → <b>HT Sales pipeline</b>: HT hand off → Contacted → Call booked → Showed → Offer made → Won / Lost. Setter never works HT. Commissions: 3% setter · 15% closer · 120-day clawback.</div>
-        </div></li>
-        </ul>
-      </li>
-      </ul>
-    </li>
-    </ul>
-  </li>
+<ul>
+<li><div class="node">
+  <div class="t">2 · Born as GHL contact + first tags + Lead fires <span class="auto">automatic</span></div>
+  <div class="d">Depends on: step 1. Performer: the funnel site's Netlify function (lead.mjs) — runs server-side on form submit.</div>
+  <div class="meta"><span class="kids">produces:</span><span>GHL contact (upsert)</span><span>campaign tag: virai-* / aicom-* / aims-* / intl-* / aims-dm-*</span><span>Cortana webhook aicom_lead · aims_lead</span><span>Meta CAPI Lead</span><span>= Peter's "upon first optin → lead fire"</span></div>
+  <div class="meta"><span class="lbl">Door B variant:</span><span>no function involved — contacts already exist with aud26 tags</span></div>
+</div>
+<ul>
+<li><div class="node">
+  <div class="t">3 · Becomes a pipeline card <span class="auto">automatic · cron</span></div>
+  <div class="d">Depends on: the tags from step 2 (Door A) or the aud26 tag (Door B). Performer: two cron workers on Pedro's box.</div>
+  <div class="meta"><span class="lbl">workers:</span><span>ghl_pipeline_sync.py · 5 min → AIO Affiliate Funnel, stage "Opted in"</span><span>reps_backfill.py · 15 min → pipeline 05 "1 New", aud26 + +1 phone + never-bought only</span></div>
+  <div class="meta"><span class="kids">produces:</span><span>11,910 cards (05) · 144+ opps (AIO) · dedupe via reps_opp_map.json</span><span>cards are never created by hand — a tag appears, a card appears</span></div>
+</div>
+<ul>
+<li><div class="node">
+  <div class="t">4 · Enrichment — country on the card <span class="auto">automatic · same worker</span></div>
+  <div class="d">Depends on: step 3 (a card exists) + phone prefix. geo-us / geo-uk / geo-br… stamped; 25,395 done. GHL's native country field is junk ('AE' on +1 numbers — verified).</div>
+  <div class="meta"><span class="kids">produces:</span><span>visible country tag on every card = Peter's "quick information … including the country"</span></div>
+</div>
+</li>
+<li><div class="node">
+  <div class="t">5 · Rep dials → tags the outcome <span class="human">human · GHL card, not Slack</span></div>
+  <div class="d">Depends on: steps 3+4 (an assigned, geo-tagged card). Peter's spec: "the card should be tagged appropriately… prob via smart tags" — Slack reactions were the pre-pipeline stopgap.</div>
+  <div class="meta"><span class="lbl">vocabulary:</span><span>✅ contacted→2</span><span>📵 no answer→3</span><span>💬 talked→4</span><span>🏪 store delivered→5</span><span>🤝 affiliate signup→6</span><span>⭐ ht qualified→7</span><span>🚫 lost dnc→8</span></div>
+  <div class="meta"><span class="kids">produces:</span><span>card auto-moves stage (verified e2e)</span><span>overlap guard: tagged = taken</span><span>e2e-verified 1→2 on a live card</span></div>
+</div>
+<ul>
+<li><div class="node">
+  <div class="t">6 · Funnel conversions ladder <span class="mixed">mixed · auto events + rep tags</span></div>
+  <div class="d">Depends on: step 5 momentum. Peter's ladder: opt-in → Lead · redeem link → Redeem page · Wix/Base44 signup → Bought affiliate · access delivered → Access.</div>
+  <div class="meta"><span class="gapk">gap:</span><span>Redeem page stage NOT wired — needs per-lead redeem links (campaign sharedid only today) — Peter's decision</span></div>
+</div>
+</li>
+<li><div class="node">
+  <div class="t">7 · HT handoff → the closer's world <span class="human">human · stage 7 → HT Sales pipeline</span></div>
+  <div class="d">Depends on: qualification (application / income override / $250 signup). Card to "7. HT qualified → closer" → <b>HT Sales pipeline</b>: HT hand off → Contacted → Call booked → Showed → Offer made → Won / Lost. Setter never works HT. Commissions: 3% setter · 15% closer · 120-day clawback.</div>
+</div>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 
-<h2 id="wherelive"><span class="no">06</span>Where everything lives (if Peter ever wants to touch it)</h2>
+<h2 id="wherelive"><span class="no">07</span>Where everything lives (if Peter ever wants to touch it)</h2>
 <div class="small" style="margin-bottom:10px">Same tree rule: children inherit from their parent — disable a parent and all its children stop.</div>
 <ul class="tree">
 <li><div class="node">
