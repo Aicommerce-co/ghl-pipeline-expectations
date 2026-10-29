@@ -69,6 +69,25 @@ tr:hover td{background:var(--panel)}
 .pill{font-size:11px;background:#0d131c;border:1px solid var(--line);border-radius:6px;padding:1px 7px;color:#a9c7e8;font-family:ui-monospace,Menlo,monospace}
 .small{font-size:12px;color:var(--mut)}
 @keyframes fadein{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.tree,.tree ul{list-style:none;margin:0;padding-left:0}
+.tree{border:1px solid var(--line);border-radius:14px;background:var(--panel);padding:6px 0}
+.tree li{position:relative;padding:0;margin:0}
+.tree li ul{margin-left:34px;border-left:1px dashed #33415c}
+.tree li>div.node{position:relative;padding:10px 14px 10px 34px;border-bottom:1px solid #1a2330}
+.tree li>div.node::before{content:'';position:absolute;left:14px;top:0;bottom:0;border-left:1px solid #33415c}
+.tree li:last-child>div.node::before{height:24px}
+.tree li ul li>div.node::before{left:-20px}
+.tree li ul li>div.node::after{content:'';position:absolute;left:-20px;top:24px;width:16px;border-top:1px dashed #33415c}
+.node .t{font-size:14.5px;font-weight:600;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.node .d{font-size:13px;color:var(--mut);margin-top:3px}
+.node .meta{margin-top:6px;font-size:12px;display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.node .meta .lbl{color:var(--mut)}
+.kids{font-size:11.5px;color:var(--pur2,#8b6fd6);border:1px solid #3a2f52;background:#171226;border-radius:6px;padding:1px 8px}
+.auto{color:#7cc0ff;border:1px solid #25466e;background:#0f1d30;border-radius:6px;padding:1px 8px;font-size:11.5px}
+.human{color:var(--orange);border:1px solid #4d3d14;background:#221b0e;border-radius:6px;padding:1px 8px;font-size:11.5px}
+.mixed{color:#7fd88a;border:1px solid #1e4d2e;background:#0f2214;border-radius:6px;padding:1px 8px;font-size:11.5px}
+.gapk{color:#ff8a80;border:1px solid #4d2325;background:#2a1214;border-radius:6px;padding:1px 8px;font-size:11.5px}
+
 </style>
 </head>
 <body>
@@ -166,75 +185,133 @@ reps_geo_moves.py      every 15 min  geo tags + status-tag → stage auto-move
                                      (full sweep + rank snapshot; NEVER demotes)
 state: reps_opp_map.json (11,910 contactId→oppId) · logs: /home/pedro/.hermes/ghl-sync/</div></details>
 
-<h2 id="flow"><span class="no">06</span>How a lead is born — and how it reaches the HT</h2>
-<div class="flow">
-  <div class="fstep"><div class="fbadge">📢</div><div class="fbody">
-    <b>Door A — live funnels</b> <span class="who"><span class="auto">automatic</span></span>
-    <div class="d">Ads → opt-in pages: virai.com/receptionist · /support · /sales · /seo · /media-buyer · build.aicommerce.co · free.aiministores.com · dm.aiministores.com. Person submits name + email + phone.</div>
-  </div></div>
-  <div class="farrow">↓</div>
-  <div class="fstep"><div class="fbadge">👶</div><div class="fbody">
-    <b>Born as a GHL contact + first tags + Lead fires</b> <span class="who"><span class="auto">automatic · Netlify function lead.mjs on each funnel site</span></span>
-    <div class="d">The form submit upserts the contact in GHL and stamps the campaign tag (virai-*, aicom-*, aims-*, intl-*, aims-dm-*). Same second: Cortana webhook (aicom_lead / aims_lead) + Meta CAPI Lead — that's Peter's "upon first optin → lead fire".</div>
-  </div></div>
-  <div class="farrow">↓</div>
-  <div class="fstep"><div class="fbadge">🚪</div><div class="fbody">
-    <b>Door B — historical audiences (no funnel)</b> <span class="who"><span class="human">bulk-imported stock</span></span>
-    <div class="d">Old lead lists already in GHL, tagged <span class="pill">aud26 - aicom - all leads - excluding known buyers</span>. Never touched a funnel — pure dialing stock for the reps.</div>
-  </div></div>
-  <div class="farrow">↓</div>
-  <div class="fstep"><div class="fbadge">🃏</div><div class="fbody">
-    <b>Becomes a pipeline card</b> <span class="who"><span class="auto">automatic · cron</span></span>
-    <div class="d">Door A: <span class="pill">ghl_pipeline_sync.py · every 5 min</span> sees a funnel tag → card in 'AIO Affiliate Funnel' at "Opted in". Door B: <span class="pill">reps_backfill.py · every 15 min</span> sees aud26 + +1 phone + never-bought → card in '05. Sales Reps' at "1 New (not contacted)". Cards are never created by hand — they appear because a tag appeared.</div>
-  </div></div>
-  <div class="farrow">↓</div>
-  <div class="fstep"><div class="fbadge">🌍</div><div class="fbody">
-    <b>Enrichment — country stamp</b> <span class="who"><span class="auto">automatic · same worker family</span></span>
-    <div class="d"><span class="pill">reps_geo_moves.py</span> stamps geo-us / geo-uk / geo-br… from the phone prefix (GHL's own country field is junk — verified 'AE' on +1 numbers). 25,395 stamped so far.</div>
-  </div></div>
-  <div class="farrow">↓</div>
-  <div class="fstep"><div class="fbadge">📞</div><div class="fbody">
-    <b>Rep dials and tags the outcome</b> <span class="who"><span class="human">human · GHL card, not Slack</span></span>
-    <div class="d">Open your assigned cards → dial → tag: ✅ contacted · 📵 no answer · 💬 talked · 🚫 not interested · 🏪 store delivered · 💰 purchased. <b>The tag moves the card</b> (worker every 15 min; native GHL workflow migration planned). No tag = still "New" = fair game for the next dial pass. A tagged card is taken — that's the overlap guard.</div>
-  </div></div>
-  <div class="farrow">↓</div>
-  <div class="fstep"><div class="fbadge">🛒</div><div class="fbody">
-    <b>Funnel conversions — free store / agents</b> <span class="who"><span class="mixed">mixed · some auto, some rep tags</span></span>
-    <div class="d">Peter's ladder: opt-in → Lead · clicks redeem link → Redeem page (<b>not wired yet</b> — needs per-lead redeem links) · signs up on Wix/Base44 → Bought affiliate · access delivered → Access. Funnel-side events auto-move the card; rep-side actions are rep tags.</div>
-  </div></div>
-  <div class="farrow">↓</div>
-  <div class="fstep"><div class="fbadge">🤝</div><div class="fbody">
-    <b>HT handoff → the closer's world</b> <span class="who"><span class="human">human · stage 7 → HT Sales pipeline</span></span>
-    <div class="d">Qualified lead (application / income override / $250 signup) → card to "7. HT qualified → closer" → <b>HT Sales pipeline</b>: HT hand off → Contacted → Call booked → Showed → Offer made → Won / Lost. Setter never works HT. Commission: 3% setter · 15% closer · 120-day clawback.</div>
-  </div></div>
+<h2 id="flow"><span class="no">05</span>How a lead is born — dependency tree up to the HT</h2>
+<div class="small" style="margin-bottom:10px">Read top-down: every node depends on the one above it. Chips show who performs the step; <span class="kids">produces</span> chips show what each step hands to the next.</div>
+<ul class="tree">
+<li><div class="node">
+  <div class="t">1 · Lead source — two doors <span class="auto">entry</span></div>
+  <div class="d">Nothing downstream exists until a contact exists in GHL.</div>
+  <div class="meta"><span class="lbl">doors:</span>
+    <span>📢 Door A — funnels (virai.com/receptionist·/support·/sales·/seo·/media-buyer, build.aicommerce.co, free/dm.aiministores.com)</span>
+    <span>🚪 Door B — historical audiences (aud26 tags, bulk stock, no funnel)</span></div>
 </div>
+  <ul>
+  <li><div class="node">
+    <div class="t">2 · Born as GHL contact + first tags + Lead fires <span class="auto">automatic</span></div>
+    <div class="d">Depends on: step 1. Performer: the funnel site's Netlify function (lead.mjs) — runs server-side on form submit.</div>
+    <div class="meta"><span class="kids">produces</span>
+      <span>GHL contact (upsert)</span><span>campaign tag: virai-* / aicom-* / aims-* / intl-* / aims-dm-*</span>
+      <span>Cortana webhook aicom_lead·aims_lead</span><span>Meta CAPI Lead</span>
+      <span class="lbl">= Peter's "upon first optin → lead fire"</span></div>
+    <div class="meta"><span class="lbl">Door B variant:</span><span>no function involved — contacts already exist with aud26 tags</span></div>
+  </div>
+    <ul>
+    <li><div class="node">
+      <div class="t">3 · Becomes a pipeline card <span class="auto">automatic · cron</span></div>
+      <div class="d">Depends on: the tags from step 2 (Door A) or the aud26 tag (Door B). Performer: two cron workers on Pedro's box.</div>
+      <div class="meta"><span class="lbl">workers:</span>
+        <span class="pill">ghl_pipeline_sync.py · 5 min → AIO Affiliate Funnel, stage "Opted in"</span>
+        <span class="pill">reps_backfill.py · 15 min → pipeline 05 "1 New", aud26 + +1 phone + never-bought only</span></div>
+      <div class="meta"><span class="kids">produces</span><span>11,910 cards (05) · 144+ opps (AIO) · dedupe via reps_opp_map.json</span>
+        <span class="lbl">cards are never created by hand — a tag appears, a card appears</span></div>
+    </div>
+      <ul>
+      <li><div class="node">
+        <div class="t">4 · Enrichment — country on the card <span class="auto">automatic · same worker</span></div>
+        <div class="d">Depends on: step 3 (a card exists) + phone prefix. geo-us / geo-uk / geo-br… stamped; 25,395 done. GHL's native country field is junk ('AE' on +1 numbers — verified).</div>
+        <div class="meta"><span class="kids">produces</span><span>visible country tag on every card = Peter's "quick information … including the country"</span></div>
+      </div></li>
+      <li><div class="node">
+        <div class="t">5 · Rep dials → tags the outcome <span class="human">human · GHL card, not Slack</span></div>
+        <div class="d">Depends on: steps 3+4 (an assigned, geo-tagged card). Peter's spec: "the card should be tagged appropriately… prob via smart tags" — Slack reactions were the pre-pipeline stopgap.</div>
+        <div class="meta"><span class="lbl">vocabulary:</span>
+          <span>✅ contacted→2</span><span>📵 no answer→3</span><span>💬 talked→4</span>
+          <span>🏪 store delivered→5</span><span>🤝 affiliate signup→6</span><span>⭐ ht qualified→7</span><span>🚫 lost dnc→8</span></div>
+        <div class="meta"><span class="kids">produces</span><span>card auto-moves stage (verified e2e)</span>
+          <span>overlap guard: tagged = taken</span><span>e2e-verified 1→2 on a live card</span></div>
+      </div>
+        <ul>
+        <li><div class="node">
+          <div class="t">6 · Funnel conversions ladder <span class="mixed">mixed · auto events + rep tags</span></div>
+          <div class="d">Depends on: step 5 momentum. Peter's ladder: opt-in → Lead · redeem link → Redeem page · Wix/Base44 signup → Bought affiliate · access delivered → Access.</div>
+          <div class="meta"><span class="gapk">gap</span><span>Redeem page stage NOT wired — needs per-lead redeem links (campaign sharedid only today) — Peter's decision</span></div>
+        </div></li>
+        <li><div class="node">
+          <div class="t">7 · HT handoff → the closer's world <span class="human">human · stage 7 → HT Sales pipeline</span></div>
+          <div class="d">Depends on: qualification (application / income override / $250 signup). Card to "7. HT qualified → closer" → <b>HT Sales pipeline</b>: HT hand off → Contacted → Call booked → Showed → Offer made → Won / Lost. Setter never works HT. Commissions: 3% setter · 15% closer · 120-day clawback.</div>
+        </div></li>
+        </ul>
+      </li>
+      </ul>
+    </li>
+    </ul>
+  </li>
+</ul>
 
-<h2 id="wherelive"><span class="no">07</span>Where everything lives (if Peter ever wants to touch it)</h2>
-<div class="card"><b>The three cron workers</b> — on Pedro's Linux box, root crontab, all flock-isolated, all logging:
-<div class="ev">ghl_pipeline_sync.py   every 5 min   /home/pedro/.hermes/ghl-sync/
-   funnel tags → AIO Affiliate Funnel opportunities + stage moves
-   state: state.json · log: sync.log
-reps_backfill.py       every 15 min  same dir
-   aud26 + +1 phone + never-bought → cards in pipeline 05 (buyer-excluded)
-   state: reps_state.json · log: reps_backfill.log
-reps_geo_moves.py      every 15 min  same dir
-   geo tags (phone prefix) + status-tag → stage auto-move
-   (full sweep + rank snapshot; idempotent; NEVER demotes)
-   state: reps_geo_state.json · map: reps_opp_map.json · log: reps_geo.log
-crontab -l shows all three; disable one: comment its line in crontab</div>
-<b>Config &amp; credentials:</b> <span class="pill">/home/pedro/r3-parts/extract/.aicom-secrets/tracking.env</span> (GHL_API_KEY, GHL_LOCATION_ID) · Slack tokens in <span class="pill">slack.env</span> same dir. Ops playbook: <span class="pill">gtm-ops skill → references/ghl-aio-pipeline.md</span>.</div>
-<div class="card"><b>GHL-native settings Peter can check</b>:
-<div class="ev">Pipelines &amp; stages  → Opportunities ▸ pipeline dropdown ▸ pipeline settings
-Custom fields       → Settings ▸ Custom Fields   (none created by us — tags used instead)
-Users / reps        → Settings ▸ Team Management (24 users; Pedro/Renato/Ardita active)
-API key in use      → Settings ▸ API (location-scoped key in tracking.env)</div></div>
-<div class="card orange"><b>What to touch and what not to</b>:
-<div class="ev">SAFE to touch   → stages, cards, tags, assignments (workers respect all human edits:
-                   never demote, never delete, idempotent moves)
-DO NOT rename   → the tag vocabulary (✅/📵/💬/🏪/🤝/⭐/🚫 and reps-* variants) —
-                   the auto-move reads these exact strings
-DO NOT delete   → aud26-* audience tags (they power the population eligibility)
-Cron workers    → edit code, not the DB; every run is resumable from its state file</div></div>
+<h2 id="wherelive"><span class="no">06</span>Where everything lives (if Peter ever wants to touch it)</h2>
+<div class="small" style="margin-bottom:10px">Same tree rule: children inherit from their parent — disable a parent and all its children stop.</div>
+<ul class="tree">
+<li><div class="node">
+  <div class="t">🖥️ Pedro's Linux box — the automation brain <span class="auto">3 cron workers, root crontab</span></div>
+  <div class="d">All in <span class="pill">/home/pedro/.hermes/ghl-sync/</span> · flock-isolated · all resumable from state files · all logging.</div>
+</div>
+  <ul>
+  <li><div class="node">
+    <div class="t">ghl_pipeline_sync.py <span class="pill">every 5 min</span></div>
+    <div class="meta"><span class="kids">feeds</span><span>AIO Affiliate Funnel opps + stage moves</span></div>
+    <div class="meta"><span class="lbl">state:</span><span class="pill">state.json</span><span class="lbl">log:</span><span class="pill">sync.log</span></div>
+  </div></li>
+  <li><div class="node">
+    <div class="t">reps_backfill.py <span class="pill">every 15 min</span></div>
+    <div class="meta"><span class="kids">feeds</span><span>pipeline 05 cards (aud26 + +1 phone + never-bought → buyer-excluded)</span></div>
+    <div class="meta"><span class="lbl">state:</span><span class="pill">reps_state.json</span><span class="lbl">log:</span><span class="pill">reps_backfill.log</span></div>
+  </div></li>
+  <li><div class="node">
+    <div class="t">reps_geo_moves.py <span class="pill">every 15 min</span></div>
+    <div class="meta"><span class="kids">feeds</span><span>geo tags + status-tag → stage auto-move (full sweep + rank snapshot; idempotent; NEVER demotes)</span></div>
+    <div class="meta"><span class="lbl">state:</span><span class="pill">reps_geo_state.json</span><span class="lbl">map:</span><span class="pill">reps_opp_map.json</span><span class="lbl">log:</span><span class="pill">reps_geo.log</span></div>
+  </div></li>
+  <li><div class="node">
+    <div class="t">🔧 To disable one</div>
+    <div class="d"><span class="mono">crontab -l</span> shows all three — comment out its line. Children stop with the parent; nothing else breaks.</div>
+  </div></li>
+  </ul>
+</li>
+<li><div class="node">
+  <div class="t">🔐 Credentials &amp; config</div>
+</div>
+  <ul>
+  <li><div class="node"><div class="t"><span class="pill">/home/pedro/r3-parts/extract/.aicom-secrets/tracking.env</span></div>
+    <div class="d">GHL_API_KEY + GHL_LOCATION_ID — what every worker authenticates with (location-scoped).</div></div></li>
+  <li><div class="node"><div class="t"><span class="pill">slack.env</span> (same dir)</div><div class="d">Slack user token — used for stakeholder comms &amp; file pulls.</div></div></li>
+  <li><div class="node"><div class="t"><span class="pill">gtm-ops skill → references/ghl-aio-pipeline.md</span></div><div class="d">The full ops playbook — every gotcha and API quirk documented there.</div></div></li>
+  </ul>
+</li>
+<li><div class="node">
+  <div class="t">🏢 GHL-native settings Peter can open</div>
+</div>
+  <ul>
+  <li><div class="node"><div class="t">Pipelines &amp; stages</div><div class="d">Opportunities ▸ pipeline dropdown ▸ settings — or the builder links in section 05.</div></div></li>
+  <li><div class="node"><div class="t">Custom Fields</div><div class="d">Settings ▸ Custom Fields — <b>none created by us</b>; tags used instead (see section 08).</div></div></li>
+  <li><div class="node"><div class="t">Team Management <span class="pill">24 users</span></div><div class="d">Settings ▸ Team Management — Pedro / Renato / Ardita active with assigned cards.</div></div></li>
+  <li><div class="node"><div class="t">API key in use</div><div class="d">Settings ▸ API — location-scoped key (the one in tracking.env).</div></div></li>
+  </ul>
+</li>
+<li><div class="node">
+  <div class="t">⚠️ Touch / don't touch</div>
+</div>
+  <ul>
+  <li><div class="node"><div class="t"><span class="auto">SAFE</span> stages · cards · tags · assignments</div>
+    <div class="d">Workers respect every human edit: never demote, never delete, idempotent moves.</div></div></li>
+  <li><div class="node"><div class="t"><span class="gapk">DO NOT</span> rename the tag vocabulary</div>
+    <div class="d">✅/📵/💬/🏪/🤝/⭐/🚫 and reps-* variants — the auto-move reads these exact strings.</div></div></li>
+  <li><div class="node"><div class="t"><span class="gapk">DO NOT</span> delete aud26-* audience tags</div>
+    <div class="d">They power the population eligibility for new cards.</div></div></li>
+  <li><div class="node"><div class="t"><span class="gapk">DO NOT</span> edit worker state files</div>
+    <div class="d">Edit the code, not the JSON state — every run is checkpointed and resumable.</div></div></li>
+  </ul>
+</li>
+</ul>
 
 <h2 id="notinghl"><span class="no">08</span>Forensic notes — deliberately NOT inside GHL</h2>
 <div class="card red"><b>No native GHL workflows</b> — sync/move logic runs as API-side cron. Why: no workflow-UI access at build time; API logic is versioned and testable. Trade-off: if the cron box dies, sync pauses (logs tell you immediately).</div>
