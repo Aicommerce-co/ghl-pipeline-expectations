@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GHL Pipelines — what Peter asked vs. what shipped</title>
+<style>
+:root{
+  --bg:#0b0e13;--panel:#121821;--card:#161e2a;--line:#243044;
+  --tx:#e8eef6;--mut:#93a3b8;--lt:#c3cfdd;
+  --blue:#1976d2;--red:#f44336;--orange:#f0a24b;--green:#4caf50;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--tx);font-family:'Roboto',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;font-size:15px;line-height:1.6}
+a{color:#6db3f2;text-decoration:none}
+a:hover{text-decoration:underline}
+code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,'Liberation Mono',monospace;font-size:.88em;background:#0d131c;border:1px solid var(--line);border-radius:6px;padding:1px 6px;color:#a9c7e8}
+header{position:sticky;top:0;z-index:10;background:rgba(11,14,19,.92);backdrop-filter:blur(10px);border-bottom:1px solid var(--line);padding:14px 22px}
+header .row{max-width:980px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+header b{font-size:15px}
+nav{display:flex;gap:4px;flex-wrap:wrap}
+nav a{font-size:12.5px;color:var(--mut);padding:4px 10px;border-radius:8px}
+nav a:hover{color:var(--tx);background:var(--card);text-decoration:none}
+main{max-width:980px;margin:0 auto;padding:34px 22px 80px}
+h1{font-size:26px;font-weight:700;letter-spacing:-.01em;margin-bottom:6px}
+h1 .hi{color:var(--blue)}
+.sub{color:var(--mut);font-size:13.5px;margin-bottom:26px}
+h2{font-size:19px;margin:44px 0 12px;padding-top:18px;border-top:1px solid var(--line)}
+h2 .no{color:var(--blue);font-family:ui-monospace,Menlo,monospace;font-size:15px;margin-right:6px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 20px;margin:14px 0;box-shadow:0 2px 10px rgba(0,0,0,.25);animation:fadein .35s ease both}
+.card.blue{border-left:3px solid var(--blue)}
+.card.green{border-left:3px solid var(--green)}
+.card.orange{border-left:3px solid var(--orange)}
+.card.red{border-left:3px solid var(--red)}
+.q{border-left:3px solid #8b6fd6;background:#10151f;border-radius:0 10px 10px 0;padding:12px 16px;margin:12px 0;font-size:14.5px;color:var(--lt)}
+.q .who{display:block;margin-top:8px;font-size:12px;color:var(--mut)}
+.q .who a{color:#6db3f2}
+.ev{background:#0d131c;border:1px solid var(--line);border-radius:10px;padding:12px 16px;margin:12px 0;font-family:ui-monospace,Menlo,monospace;font-size:12.8px;color:#a9c7e8;white-space:pre-wrap;line-height:1.55;overflow-x:auto}
+.warn{background:#1d1410;border:1px solid #4a2e14;border-radius:10px;padding:12px 16px;margin:12px 0;font-size:13.5px;color:var(--orange)}
+.links{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.links a{font-size:12.5px;border:1px solid var(--line);background:var(--panel);padding:6px 13px;border-radius:9px;color:#6db3f2}
+.links a:hover{border-color:var(--blue);text-decoration:none}
+table{width:100%;border-collapse:collapse;font-size:13.5px;margin:12px 0}
+th{color:var(--mut);font-size:11.5px;text-transform:uppercase;letter-spacing:.06em;text-align:left;padding:8px 10px;border-bottom:1px solid var(--line)}
+td{padding:9px 10px;border-bottom:1px solid #1a2330;vertical-align:top}
+tr:hover td{background:var(--panel)}
+.tldr{background:linear-gradient(135deg,#121821,#0f1622);border:1px solid var(--line);border-radius:16px;padding:20px 22px;box-shadow:0 4px 18px rgba(0,0,0,.35)}
+.tldr ul{margin:10px 0 0 18px}
+.tldr li{margin:6px 0;font-size:14.5px}
+.pill{font-size:11px;background:#0d131c;border:1px solid var(--line);border-radius:6px;padding:1px 7px;color:#a9c7e8;font-family:ui-monospace,Menlo,monospace}
+.small{font-size:12px;color:var(--mut)}
+@keyframes fadein{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+</style>
+</head>
+<body>
+
+<header><div class="row">
+  <b>GHL Pipelines · <span style="color:var(--blue)">asked vs. shipped</span></b>
+  <nav>
+    <a href="#tldr">TL;DR</a><a href="#reps">Reps pipelines</a><a href="#tags">Tags &amp; auto-move</a>
+    <a href="#geo">Country</a><a href="#links">Links</a><a href="#deep">Deep links</a><a href="#notinghl">Not in GHL</a>
+  </nav>
+</div></header>
+
+<main>
+<h1>GHL pipelines: what <span class="hi">Peter asked</span> → what shipped</h1>
+<div class="sub">Every quote is Peter Szabo's verbatim Slack text with a permalink to the message. Every "shipped" claim was verified live against the GHL API on Oct 28–29, 2026. Location <span class="pill">3n4109pfBDdwnHX60Agy</span> · generated Oct 29.</div>
+
+<h2 id="tldr"><span class="no">00</span>TL;DR</h2>
+<div class="tldr">
+  <ul>
+    <li><b>Reps pipelines are live and tested</b> — old leads (11,910 cards) + new funnel leads (auto-synced), geo tags on 25,395 contacts, tag→stage automation verified end-to-end.</li>
+    <li><b>You, Renato and Ardita are assigned</b> — 20 stage-1 cards each, verified on the board.</li>
+    <li><b>Reps tag outcomes in GHL, not Slack</b> — that's Peter's own spec ("the card should be tagged appropriately… prob via smart tags"). Slack reactions were the stopgap.</li>
+    <li><b>Open:</b> the Loom (Peter's top-priority ask), per-lead redeem-link scheme, and the funnel tracking-code half of the checklist.</li>
+  </ul>
+</div>
+
+<h2 id="reps"><span class="no">01</span>"Single pipeline… prevent multiple people from dialing the same prospect"</h2>
+<div class="q">"*We need a single pipeline for all reps so there is no overlap.* The pipeline should display quick information about each lead, including the country, on the card. … The card should be tagged appropriately and moved to the correct section, or the sales rep should be assigned, to prevent multiple people from dialing the same prospect.
+<span class="who">— Peter Szabo, GC Oct 28 · <a href="https://aicommerceco.slack.com/archives/C0BNA790X09/p1793184149424879" target="_blank">permalink ↗</a> · refined Oct 28: <a href="https://aicommerceco.slack.com/archives/D0APC05G0E6/p1793197800179849" target="_blank">"old leads + new leads, keep 2 separate pipelines"</a></span></div>
+<div class="card green"><b>Shipped:</b> two pipelines, exactly as the refined spec says — one per lead type, one shared board each.
+<div class="ev">OLD LEADS  → '05. Sales Reps - AI Commerce Leads (US)'  JERSAOwgLlNoIuFL4Yec
+             11,910 open cards · 8 stages · population cron 15 min · buyer-excluded
+NEW LEADS   → 'AIO Affiliate Funnel'                          Mdd2dENegnpFBpYUmXtC
+             auto-populated from funnel tags (sync cron 5 min, 144+ opps)
+ASSIGNED    → pedro 20 · renato 20 · ardita 20 stage-1 cards (verified readback)</div>
+<div class="links">
+  <a href="https://app.gohighlevel.com/v2/location/3n4109pfBDdwnHX60Agy/opportunities/JERSAOwgLlNoIuFL4Yec" target="_blank">Board — old leads ↗</a>
+  <a href="https://app.gohighlevel.com/v2/location/3n4109pfBDdwnHX60Agy/opportunities/Mdd2dENegnpFBpYUmXtC" target="_blank">Board — new leads ↗</a>
+</div></div>
+
+<h2 id="tags"><span class="no">02</span>"An emoji or tag should indicate the lead's status… prob via smart tags"</h2>
+<div class="q">"An emoji or tag should indicate the lead's status, such as whether a call was received but not connected, whether the lead is not interested, or whether the lead has already purchased." <span class="who">— GC Oct 28 · <a href="https://aicommerceco.slack.com/archives/C0BNA790X09/p1793184149424879" target="_blank">permalink ↗</a> · "in GHL opps … easily see on the cards if they've been contacted, or didn't pick up … prob via smart tags" — DM Oct 22 · <a href="https://aicommerceco.slack.com/archives/D0APC05G0E6/p1792703598654539" target="_blank">permalink ↗</a></span></div>
+<div class="card blue"><b>Shipped:</b> a tag vocabulary that reps apply after every dial — the card <i>moves itself</i>.
+<div class="ev">✅ contacted → stage 2   📵 no answer → stage 3   💬 talked → stage 4
+🏪 store delivered → 5   🤝 affiliate signup → 6   ⭐ ht qualified → 7   🚫 lost dnc → 8
+(plain-text variants reps-contacted, reps-no-answer… also accepted; sam-contacted-*
+stamps from the ElevenLabs voice agent count as contacted)
+e2e-verified: tag added on a live card → stage moved 1→2 automatically, then reverted.</div>
+<b>Tagging happens in GHL</b> — Slack reactions were the pre-pipeline stopgap. Peter's spec says the card carries the status; the auto-move, overlap guard and assignment views all read from GHL.
+<div class="links">
+  <a href="https://app.gohighlevel.com/v2/location/3n4109pfBDdwnHX60Agy/opportunities/JERSAOwgLlNoIuFL4Yec" target="_blank">Board ↗</a>
+</div></div>
+
+<h2 id="geo"><span class="no">03</span>"Quick information about each lead, including the country, on the card"</h2>
+<div class="q">"The pipeline should display quick information about each lead, including the country, on the card." <span class="who">— GC Oct 28 · <a href="https://aicommerceco.slack.com/archives/C0BNA790X09/p1793184149424879" target="_blank">permalink ↗</a></span></div>
+<div class="card blue"><b>Shipped:</b> geo tags from phone prefix, displayed on every card.
+<div class="ev">GHL's native contact.country is junk — verified: 'AE' on +1 (US) numbers, 15k blank.
+So the sync worker stamps geo- tags from the phone prefix instead:
+25,395 contacts geo-stamped of 34,577 scanned (geo-us, geo-uk, geo-br, geo-de, …)
+new contacts get stamped automatically by the 15-min worker.</div>
+<div class="warn">Why tags and not the country field / custom fields: tags render on opportunity cards natively today; the country field data is unusable, and custom fields would need UI setup per card view. If Peter prefers a real "Country" column, that's a follow-up.</div></div>
+
+<h2 id="links"><span class="no">04</span>"Ideally they move automatically when they hit different links"</h2>
+<div class="q">"ideally they move automatically when they hit different links" · "we just need to see the leads coming in" · "• [ ] set-up GHL pipelines · • [ ] GHL tracking code missing on some funnels" <span class="who">— DM Oct 22 · <a href="https://aicommerceco.slack.com/archives/D0APC05G0E6/p1792703406273439" target="_blank">permalink ↗</a> · <a href="https://aicommerceco.slack.com/archives/D0APC05G0E6/p1792703388844059" target="_blank">↗</a> · <a href="https://aicommerceco.slack.com/archives/D0APC05G0E6/p1792703350213059" target="_blank">↗</a></span></div>
+<div class="card green"><b>Shipped (pipeline half):</b> two cron workers move cards without human action.
+<div class="ev">ghl_pipeline_sync.py  every 5 min   funnel opt-in tags → AIO opps
+                                          (affiliate-signup-* → Bought affiliate, else Opted in)
+reps_geo_moves.py     every 15 min  status tags → stage moves in pipeline 05
+known limit: 'Redeem page' stage needs a per-lead redeem-link scheme (campaign-level
+sharedid only today) — needs Peter's decision.</div>
+<div class="card orange" style="margin-top:12px"><b>Open (tracking half):</b> "GHL tracking code missing on some funnels" — that lives on the funnel sites, not in GHL. Partial coverage: Cortana <span class="pill">aicom_lead</span> + <span class="pill">aims_lead</span> wired in build.aicommerce.co, free.aiministores.com, dm.aiministores.com. Known defect: <span class="pill">virai_complete_registration</span> failing 98/101 (payload mismatch).</div></div>
+
+<h2 id="deep"><span class="no">05</span>Deep links (login required)</h2>
+<table>
+<tr><th>Asset</th><th>ID</th><th>Open</th></tr>
+<tr><td><b>05 · Sales Reps — old leads</b> <span class="pill">11,910</span></td><td class="mono">JERSAOwgLlNoIuFL4Yec</td><td><a href="https://app.gohighlevel.com/v2/location/3n4109pfBDdwnHX60Agy/opportunities/JERSAOwgLlNoIuFL4Yec" target="_blank">board</a> · <a href="https://app.gohighlevel.com/v2/location/3n4109pfBDdwnHX60Agy/pipelines/JERSAOwgLlNoIuFL4Yec" target="_blank">builder</a></td></tr>
+<tr><td><b>AIO Affiliate Funnel — new leads</b></td><td class="mono">Mdd2dENegnpFBpYUmXtC</td><td><a href="https://app.gohighlevel.com/v2/location/3n4109pfBDdwnHX60Agy/opportunities/Mdd2dENegnpFBpYUmXtC" target="_blank">board</a> · <a href="https://app.gohighlevel.com/v2/location/3n4109pfBDdwnHX60Agy/pipelines/Mdd2dENegnpFBpYUmXtC" target="_blank">builder</a></td></tr>
+<tr><td>Lead Reactivation — Setters</td><td class="mono">jO42PK3bA625amAvft6v</td><td><a href="https://app.gohighlevel.com/v2/location/3n4109pfBDdwnHX60Agy/opportunities/jO42PK3bA625amAvft6v" target="_blank">board</a></td></tr>
+<tr><td>Contacts <span class="pill">25,395 geo-tagged</span></td><td>—</td><td><a href="https://app.gohighlevel.com/v2/location/3n4109pfBDdwnHX60Agy/contacts/" target="_blank">open</a></td></tr>
+<tr><td>Team management <span class="pill">reps exist ✓</span></td><td>—</td><td><a href="https://app.gohighlevel.com/v2/location/3n4109pfBDdwnHX60Agy/settings/team-management/" target="_blank">open</a></td></tr>
+</table>
+<details><summary>Stage IDs of pipeline 05 (debug / deep links)</summary>
+<div class="ev">1 New (not contacted)     96ee5691-bd44-455a-9bf8-1e75ca11536a
+2 Texted / Called        9fa5e423-08e1-4d29-9f29-b5fd78349ebe
+3 No Answer - retry      ec501583-27ac-45e3-900d-4e632471ffe2
+4 Talked / Replied       af4bbcf8-4efb-4a8b-8d64-5eefa1d30491
+5 Free store delivered   759be651-3b21-43d4-a643-3927ca1c0786
+6 Affiliate signup       e75acb54-2c56-4881-8376-62373eca3b65
+7 HT qualified → closer  052f48c5-ae63-4b38-b387-93dca05b0cd8
+8 Lost / DNC             a6f20b49-3944-4858-8c7a-673fd8469024</div></details>
+<details><summary>Automation stack (3 flock-isolated cron workers)</summary>
+<div class="ev">ghl_pipeline_sync.py   every 5 min   funnel tags → AIO opps + stages
+reps_backfill.py       every 15 min  eligible leads → pipeline 05 cards (buyer-excluded)
+reps_geo_moves.py      every 15 min  geo tags + status-tag → stage auto-move
+                                     (full sweep + rank snapshot; NEVER demotes)
+state: reps_opp_map.json (11,910 contactId→oppId) · logs: /home/pedro/.hermes/ghl-sync/</div></details>
+
+<h2 id="notinghl"><span class="no">06</span>Forensic notes — deliberately NOT inside GHL</h2>
+<div class="card red"><b>No native GHL workflows</b> — sync/move logic runs as API-side cron. Why: no workflow-UI access at build time; API logic is versioned and testable. Trade-off: if the cron box dies, sync pauses (logs tell you immediately).</div>
+<div class="card red"><b>No custom fields</b> — country/status ride on tags. Why: tags already display on cards; contact.country is junk (verified 'AE' on +1 numbers). Trade-off: no columnar country reporting yet.</div>
+<div class="card red"><b>38 legacy cards</b> from a pre-fix run were left in place (no-delete rule) — harmless, documented.</div>
+<div class="card red"><b>'Redeem page' stage unwired</b> — redeem pages expose campaign-level sharedid only; needs Peter's per-lead link scheme.</div>
+<div class="card red"><b>Zero assignedTo beyond the first 60</b> — reps were added Oct 29; the 20-cards-each batch is the pilot. Scale-up is one command.</div>
+
+</main>
+</body>
+</html>
