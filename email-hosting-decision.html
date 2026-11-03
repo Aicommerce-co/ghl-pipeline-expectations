@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Email Hosting Decision — G Suite exit options (Nov 2026)</title>
+<style>
+:root{--bg:#0b0e13;--panel:#121821;--card:#161e2a;--line:#243044;--tx:#e8eef6;--mut:#93a3b8;--lt:#c3cfdd;
+--blue:#1976d2;--red:#f44336;--orange:#f0a24b;--green:#4caf50;--purple:#9c6ade}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--tx);font:14px/1.55 -apple-system,'Segoe UI',Roboto,sans-serif;padding:28px 18px 60px}
+.wrap{max-width:1080px;margin:0 auto}h1{font-size:23px;margin:0 0 4px}h2{font-size:17px;margin:34px 0 10px;color:var(--lt)}
+.sub{color:var(--mut);font-size:13px;margin-bottom:22px}
+.tldr{background:linear-gradient(135deg,#0f1d30,#121a26);border:1px solid #25466e;border-radius:14px;padding:16px 20px;margin:18px 0}
+.tldr b{color:#7fb3ee}
+.tabs{display:flex;gap:8px;margin:18px 0;flex-wrap:wrap}
+.tab{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:9px 16px;cursor:pointer;font-size:13.5px;color:var(--mut)}
+.tab.on{background:#122638;border-color:var(--blue);color:var(--tx);font-weight:600}
+.pane{display:none}.pane.on{display:block}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin:16px 0}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+.stat .n{font-size:24px;font-weight:700;margin:2px 0}.stat .l{font-size:12px;color:var(--mut)}
+.g .n{color:var(--green)}.o .n{color:var(--orange)}.b .n{color:#7fb3ee}.r .n{color:var(--red)}.p .n{color:#bd93f9}
+table{width:100%;border-collapse:collapse;margin:12px 0;font-size:13px}
+th{background:var(--panel);color:var(--mut);text-align:left;padding:9px 12px;border:1px solid var(--line);font-weight:600;font-size:12px;cursor:pointer}
+th:hover{color:var(--tx)}td{padding:8px 12px;border:1px solid var(--line);vertical-align:top}
+tr:hover td{background:#1a2331}
+.pill{display:inline-block;border-radius:20px;padding:1px 10px;font-size:11.5px;font-weight:600}
+.pill.g{background:#12351c;color:#7ddf9a;border:1px solid #1f5c33}.pill.o{background:#3a2a12;color:#f0c07b;border:1px solid #6b4c1e}
+.pill.r{background:#3a1512;color:#f08b7b;border:1px solid #6b2b1e}.pill.b{background:#122638;color:#7fb3ee;border:1px solid #25466e}.pill.p{background:#2a1e3e;color:#bd93f9;border:1px solid #4a3670}
+.verdict{border-left:3px solid var(--blue);background:var(--panel);border-radius:0 10px 10px 0;padding:12px 16px;margin:10px 0;font-size:13.5px}
+.verdict.good{border-color:var(--green)}.verdict.warn{border-color:var(--orange)}.verdict.bad{border-color:var(--red)}.verdict.info{border-color:var(--blue)}
+.calc{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 20px;margin:14px 0}
+.calc label{display:block;margin:10px 0 4px;color:var(--mut);font-size:13px}
+.calc input{background:var(--panel);border:1px solid var(--line);border-radius:8px;color:var(--tx);padding:8px 12px;font-size:15px;width:120px}
+.res{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;margin-top:14px}
+.res .stat{padding:10px 14px}
+details{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 16px;margin:8px 0}
+summary{cursor:pointer;font-weight:600;color:var(--lt)}
+code{background:#0d1420;border:1px solid var(--line);border-radius:5px;padding:1px 6px;font-size:12px;color:#9ecbef}
+a{color:#7fb3ee}.nav{position:sticky;top:0;background:rgba(11,14,19,.95);backdrop-filter:blur(6px);z-index:5;padding:10px 0;border-bottom:1px solid var(--line);margin-bottom:18px}
+.nav a{margin-right:16px;font-size:12.5px;text-decoration:none}
+.small{font-size:12px;color:var(--mut)}
+.evi{font-size:11.5px;color:var(--mut);font-family:ui-monospace,Menlo,monospace;background:#0d1420;border:1px solid var(--line);border-radius:8px;padding:8px 12px;margin:8px 0;white-space:pre-wrap}
+</style>
+</head>
+<body><div class="wrap">
+<h1>Email Hosting — the G Suite exit decision</h1>
+<div class="sub">2026-11-03 · companion to <a href="data-sources-audit.html">Lead Inventory Audit</a> · context: peterszabo.co reverted to G Suite same day (live-verified) to unblock Stripe mail; long-term plan below</div>
+
+<div class="tldr">
+<b>TL;DR</b> — No, we can't "stick to the cheapest plan" and make G Suite cheap: Business Starter is <b>$7/user/mo on annual commitment</b> ($8.40 flexible). With ~10–14 users that's <b>$840–$1,411/yr</b>, forever. The realistic exit: <b>everything on Purelymail ($10/yr flat, total)</b> or everything on <b>Infomaniak (already paid, ~$10/yr, unlimited mailboxes)</b> — with one optional $84/yr G Suite seat for Peter only if he wants Gmail UI/Calendar. One domain = one provider (MX has no per-user split); per-domain split is free and easy.
+</div>
+
+<div class="nav"><a href="#cost">Cost reality</a><a href="#calc">Calculator</a><a href="#options">The 4 options</a><a href="#compare">Comparison</a><a href="#plan">Migration plan</a><a href="#method">Sources</a></div>
+
+<h2 id="cost">Cost reality — "cheapest plan" doesn't save G Suite</h2>
+<div class="grid">
+<div class="stat r"><div class="l">G Suite Business Starter (annual commit)</div><div class="n">$84/user/yr</div><div class="l">$7/user/mo · 30GB · billed min. 1yr commitment; flexible = $8.40/mo · 50%-off promo ($3.50) only first 3 months, first 20 users, then reverts</div></div>
+<div class="stat g"><div class="l">Purelymail (simple pricing)</div><div class="n">$10/yr total</div><div class="l">unlimited users · unlimited custom domains · 30GB-ish fair use · IMAP/POP · catch-alls · per-domain DKIM · porting tool</div></div>
+<div class="stat g"><div class="l">Infomaniak (already purchased)</div><div class="n">~$10/yr</div><div class="l">unlimited mailboxes · already owns mail.infomaniak service 1113470 · Renato live on it · manager UI for mailbox creation</div></div>
+<div class="stat o"><div class="l">Zoho Mail Lite (alt)</div><div class="n">$12/user/yr</div><div class="l">web+mobile apps, calendars, 5GB/user · closest cheap "suite" feel · IMAP/POP · per-domain DKIM</div></div>
+</div>
+<div class="verdict warn"><b>The trap in the promo:</b> Google's "$3.50/mo" banner is 50% off for 3 months only, first 20 users, then $7/user/mo. There is no permanent cheap tier. At Peter's roster (~6+ reps listed Nov 3: Adil, Aislinn, Alokesh, Anthony, Ardita, Aron + Peter + Pedro + growth) G Suite = <b>$840–$1,400/yr recurring</b>. Purelymail = $10/yr. That's a 99% cut.</div>
+
+<h2 id="calc">Calculator — drag the roster size</h2>
+<div class="calc">
+<label>Users who need a real mailbox</label>
+<input type="number" id="users" value="10" min="1" max="200">
+<div class="res">
+<div class="stat r"><div class="l">G Suite Starter (annual)</div><div class="n" id="r_g">—</div><div class="l">per year, recurring</div></div>
+<div class="stat r"><div class="l">G Suite (flexible)</div><div class="n" id="r_gf">—</div><div class="l">per year</div></div>
+<div class="stat g"><div class="l">Purelymail</div><div class="n" id="r_p">$10</div><div class="l">flat, total, all users</div></div>
+<div class="stat g"><div class="l">Infomaniak</div><div class="n" id="r_i">$10</div><div class="l">already paid</div></div>
+<div class="stat o"><div class="l">Zoho Lite</div><div class="n" id="r_z">—</div><div class="l">per year</div></div>
+<div class="stat p"><div class="l">Hybrid: G Suite ×1 + rest Purelymail</div><div class="n" id="r_h">$94</div><div class="l">Peter-only seat</div></div>
+<div class="stat p"><div class="l">Savings vs G Suite</div><div class="n" id="r_s">—</div><div class="l">Purelymail vs G Suite annual</div></div>
+</div></div>
+
+<h2 id="options">The 4 realistic options</h2>
+<div class="tabs">
+<div class="tab on" data-t="t1">A · All Purelymail — recommended</div>
+<div class="tab" data-t="t2">B · Hybrid: G Suite ×1 + Purelymail</div>
+<div class="tab" data-t="t3">C · All Infomaniak (already paid)</div>
+<div class="tab" data-t="t4">D · Zoho Lite (suite feel)</div>
+</div>
+<div class="pane on" id="t1">
+<div class="verdict good"><b>A — everything on Purelymail. $10/yr total.</b><br>
+All domains (peterszabo.co, aicommerce.co, sourcehacker.com, virai.com, pszabo.com…) get MX → purelymail, per-domain DKIM, catch-alls per domain so no address ever bounces. Reps connect Apple Mail/Outlook/Thunderbird via IMAP or Purelymail's webmail; MFA + app passwords supported.<br><br>
+<b>Lose:</b> Gmail UI, Google Calendar sync, Gemini in Gmail. Mail history: Purelymail has a <b>mail porting tool</b> + Pedro's takeout.google.com export path (already suggested in the GC).<br>
+<b>Keep:</b> Drive/Docs/Calendar can stay as free Google accounts — only <i>mail</i> moves. Nothing else breaks: Stripe, GHL, Sendy all just send <i>to</i> addresses; MX change is invisible to senders.<br>
+<b>Cost:</b> $10/yr + zero per-seat. Risk: small provider (fair-use soft limits); storage metered loosely — fine for text mailboxes, heavy attachments users should archive.</div></div>
+<div class="pane" id="t2">
+<div class="verdict info"><b>B — Peter keeps one G Suite seat, everyone else Purelymail. $94/yr.</b><br>
+Peter's me@peterszabo.co stays Gmail (Stripe, history, UI he likes). Rep mailboxes (adil@, aislinn@, alokesh@, anthony@, ardita@, aron@…) move to Purelymail — <b>same addresses</b>, same domain; senders notice nothing.<br>
+Caveat: addresses on the <b>same domain as Peter</b> land on Purelymail while his lands on Google — that's exactly the "one domain → one MX" constraint, and it <b>cannot work</b> for a single domain split per-user. So B requires either: (i) reps keep @peterszabo.co and the WHOLE domain moves to Purelymail except Peter gets @pszabo.com or a Google Workspace <i>secondary domain</i>… not clean; or (ii) simpler: the whole peterszabo.co domain moves to Purelymail and Peter's mail is forwarded there — no true hybrid on one domain.<br>
+<b>Honest verdict: the clean hybrid is per-DOMAIN, not per-user:</b> e.g. peterszabo.co → Purelymail for everyone, and Peter personally uses pszabo.com on a single G Suite seat ($84/yr) if he insists on Gmail.</div></div>
+<div class="pane" id="t3">
+<div class="verdict info"><b>C — everything on Infomaniak. $0 incremental (already paid).</b><br>
+Service 1113470 already exists; Renato is live on it; we cut 3 domains to it on Nov 2 and it worked (DNS side perfect). Mailbox creation is manager-UI only (no public API for mailbox create) — manual clicking per mailbox, ~1 min each.<br>
+<b>Today's lesson built in:</b> the Renato bounce happened because MX pointed at Infomaniak before the me@ mailbox existed. Fix-then-cut: create ALL mailboxes in the UI first, flip MX last.<br>
+<b>vs Purelymail:</b> comparable price; Infomaniak has a webmail UI and apps, European deliverability, calendar; mailbox creation is manual UI (no API). Purelymail wins on automation (full API/portal control) and the porting tool.</div></div>
+<div class="pane" id="t4">
+<div class="verdict warn"><b>D — Zoho Mail Lite, $12/user/yr.</b><br>
+The "real suite feel" budget option: webmail + mobile apps + calendar + 5GB/user, IMAP/POP, custom-domain DKIM. At 10 users = $120/yr — 12× Purelymail but 93% cheaper than G Suite.<br>
+Choose only if reps actually need app-like webmail + calendars bundled. Otherwise it's paying per-seat for something Purelymail gives free via IMAP clients.</div></div>
+
+<h2 id="compare">Comparison matrix</h2>
+<table id="cmp">
+<thead><tr><th>Option</th><th>Cost/yr (10 users)</th><th>Webmail UI</th><th>Calendar/suite</th><th>Automation (API)</th><th>Migration effort</th><th>Main risk</th></tr></thead>
+<tbody>
+<tr><td><b>A · Purelymail (all)</b></td><td class="pill g">$10</td><td>basic</td><td>—</td><td class="pill g">full portal/API</td><td class="pill g">low — porting tool + takeout import</td><td>small provider, fair-use limits</td></tr>
+<tr><td><b>B · G Suite ×1 + Purelymail</b></td><td class="pill b">$94</td><td class="pill b">Gmail for Peter</td><td class="pill b">Google for Peter</td><td class="pill g">full</td><td class="pill o">medium — per-domain routing decision</td><td>per-user split impossible; needs domain discipline</td></tr>
+<tr><td><b>C · Infomaniak (all)</b></td><td class="pill g">$0 new</td><td class="pill g">good</td><td class="pill b">calendar</td><td class="pill o">mailbox create = UI only</td><td class="pill b">low — mailboxes-first then MX</td><td>manual mailbox creation per user</td></tr>
+<tr><td><b>D · Zoho Lite (all)</b></td><td class="pill o">$120</td><td class="pill g">apps+mobile</td><td class="pill g">calendar</td><td class="pill b">admin API</td><td class="pill b">low-medium</td><td>5GB/user caps; per-seat forever</td></tr>
+<tr><td><b>Status quo · G Suite</b></td><td class="pill r">$840–1,411</td><td class="pill g">Gmail</td><td class="pill g">full</td><td class="pill g">full</td><td class="pill g">—</td><td class="pill r">cost grows with every rep hired</td></tr>
+</tbody></table>
+<div class="verdict good"><b>Recommendation:</b> <b>Option A (all Purelymail)</b> — or <b>C</b> if Pedro/Peter value Infomaniak's webmail and want zero new vendor. In both: create mailboxes FIRST, flip MX per domain SECOND, keep SPF merged with all legit senders, per-domain DKIM from the provider panel (never reuse keys across domains), and takeout.google.com export before any Google cutover. Keep DNS TTLs low (300s) for fast rollback. Every cutover is reversible in &lt;2 min via the Cloudflare API (proven twice this week).</div>
+
+<h2 id="plan">Migration plan (whichever option wins)</h2>
+<details open><summary>Phase 0 — Peter decides</summary><ul>
+<li>Pick option (A/C recommended). Decide if ANYONE needs Gmail UI long-term → if yes, that person moves to his own domain seat (Option B pattern), never shared-domain per-user split.</li>
+<li>Roster freeze: list every live mailbox + which domain (Peter's Nov 3 screenshot = seed list; Pedro has admin access to enumerate the rest).</li>
+</ul></details>
+<details><summary>Phase 1 — provision (before any DNS touch)</summary><ul>
+<li>Create every mailbox + catch-all on the target provider; set temp passwords; rep changes password on first login.</li>
+<li>Purelymail: import old mail via porting tool / takeout mbox import. Infomaniak: import from takeout too.</li>
+<li>Record per-domain DKIM selectors; prep SPF merges (keep ClickFunnels/HelpScout/emsd1/ip4:62.83.18.84 includes).</li></ul></details>
+<details><summary>Phase 2 — cut (per domain, 2 min each, reversible)</summary><ul>
+<li>Cloudflare API: swap MX (delete old set, add provider's), merge SPF, publish DKIM/DMARC. Same recipe executed 3× on Nov 2 and re-executed for today's revert.</li>
+<li>Verify live via dig @1.1.1.1 + real send/receive tests (today's Renato bounce = the proof that readback matters).</li>
+<li>Order: lowest-stakes domain first (pszabo.com), peterszabo.co LAST (Stripe + reps live there), after hours.</li></ul></details>
+<details><summary>Phase 3 — decommission G Suite</summary><ul>
+<li>takeout.google.com full export (already suggested in GC) → keep as archive.</li>
+<li>Cancel subscription only AFTER a week of clean send/receive + Stripe test. Google account logins (Drive/Analytics/GHL SSO if any) stay intact as free accounts.</li></ul></details>
+
+<h2 id="method">Sources (checked 2026-11-03)</h2>
+<div class="evi">Google Workspace pricing: knowledge.workspace.google.com — Business Starter $8.40/mo flexible, $7/mo annual ($84/yr); Standard $16.80/$14; Plus $26.40/$22. Promo "$3.50" = 50% off 3 months, first 20 users, 12-month cap (workspace.google.com/pricing).
+Purelymail: purelymail.com/pricing + /docs/users + /docs/features — $10/yr simple, no per-user/domain charges, catch-alls, MFA, app passwords, IMAP/POP, porting tool; advanced pricing $4/yr + metered.
+Zoho Mail Lite: $12/user/yr (list, checked Oct 25 2026 comparison).
+Infomaniak: service 1113470 active (Renato's live mailbox + Peter's manager link in GC); mailbox creation UI-only — observed Nov 2–3 during the 3-domain cutover and the me@peterszabo.co 550 bounce incident.
+peterszabo.co reverted to Google MX/SPF/DKIM 2026-11-03 ~18:35, verified live via dig @1.1.1.1.</div>
+<p class="small">Nothing cancelled or provisioned yet — this page is the decision doc. DNS changes are Pedro-executable via Cloudflare API in minutes.</p>
+</div>
+<script>
+const users=document.getElementById('users');
+function calc(){const n=+users.value||0;
+const g=(n*84), gf=(n*8.4*12), z=(n*12), h=84+10;
+document.getElementById('r_g').textContent='$'+g.toLocaleString();
+document.getElementById('r_gf').textContent='$'+gf.toLocaleString();
+document.getElementById('r_p').textContent='$10';
+document.getElementById('r_i').textContent='$0 new';
+document.getElementById('r_z').textContent='$'+z.toLocaleString();
+document.getElementById('r_h').textContent='$'+h;
+document.getElementById('r_s').textContent='$'+(g-10).toLocaleString();}
+users.addEventListener('input',calc);calc();
+document.querySelectorAll('.tab').forEach(t=>t.addEventListener('click',()=>{
+document.querySelectorAll('.tab').forEach(x=>x.classList.remove('on'));
+document.querySelectorAll('.pane').forEach(x=>x.classList.remove('on'));
+t.classList.add('on');document.getElementById(t.dataset.t).classList.add('on');}));
+document.querySelectorAll('#cmp th').forEach((th,i)=>{th.addEventListener('click',()=>{
+const tb=th.closest('table').querySelector('tbody');const rows=[...tb.rows];const asc=th.dataset.asc!=='1';th.dataset.asc=asc?'1':'0';
+rows.sort((a,b)=>{const x=a.cells[i].innerText.replace(/[^\d.-]/g,''),y=b.cells[i].innerText.replace(/[^\d.-]/g,'');const nx=parseFloat(x),ny=parseFloat(y);
+if(!isNaN(nx)&&!isNaN(ny))return asc?nx-ny:ny-nx;return asc?a.cells[i].innerText.localeCompare(b.cells[i].innerText):b.cells[i].innerText.localeCompare(a.cells[i].innerText);});
+rows.forEach(r=>tb.appendChild(r));});});
+</script>
+</body></html>
