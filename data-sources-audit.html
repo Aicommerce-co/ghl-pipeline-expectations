@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Contact Sources Audit — Sendy / Hyros / Close vs GHL (Nov 3, 2026)</title>
+<style>
+:root{
+  --bg:#0b0e13;--panel:#121821;--card:#161e2a;--line:#243044;
+  --tx:#e8eef6;--mut:#93a3b8;--lt:#c3cfdd;
+  --blue:#1976d2;--red:#f44336;--orange:#f0a24b;--green:#4caf50;--purple:#9c6ade;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font:14px/1.55 -apple-system,'Segoe UI',Roboto,sans-serif;padding:28px 18px 60px}
+.wrap{max-width:1080px;margin:0 auto}
+h1{font-size:23px;margin:0 0 4px}
+h2{font-size:17px;margin:34px 0 10px;color:var(--lt)}
+.sub{color:var(--mut);font-size:13px;margin-bottom:22px}
+.tldr{background:linear-gradient(135deg,#0f1d30,#121a26);border:1px solid #25466e;border-radius:14px;padding:16px 20px;margin:18px 0}
+.tldr b{color:#7fb3ee}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px;margin:16px 0}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+.stat .n{font-size:26px;font-weight:700;margin:2px 0}
+.stat .l{font-size:12px;color:var(--mut)}
+.g .n{color:var(--green)}.o .n{color:var(--orange)}.b .n{color:#7fb3ee}.r .n{color:var(--red)}.p .n{color:#bd93f9}
+table{width:100%;border-collapse:collapse;margin:12px 0;font-size:13px}
+th{background:var(--panel);color:var(--mut);text-align:left;padding:9px 12px;border:1px solid var(--line);font-weight:600;font-size:12px;cursor:pointer;user-select:none}
+th:hover{color:var(--tx)}
+td{padding:8px 12px;border:1px solid var(--line);vertical-align:top}
+tr:hover td{background:#1a2331}
+.pill{display:inline-block;border-radius:20px;padding:1px 10px;font-size:11.5px;font-weight:600}
+.pill.g{background:#12351c;color:#7ddf9a;border:1px solid #1f5c33}
+.pill.o{background:#3a2a12;color:#f0c07b;border:1px solid #6b4c1e}
+.pill.r{background:#3a1512;color:#f08b7b;border:1px solid #6b2b1e}
+.pill.b{background:#122638;color:#7fb3ee;border:1px solid #25466e}
+.pill.p{background:#2a1e3e;color:#bd93f9;border:1px solid #4a3670}
+.verdict{border-left:3px solid var(--blue);background:var(--panel);border-radius:0 10px 10px 0;padding:12px 16px;margin:10px 0;font-size:13.5px}
+.verdict.good{border-color:var(--green)}.verdict.warn{border-color:var(--orange)}.verdict.info{border-color:var(--blue)}.verdict.bad{border-color:var(--red)}
+.evi{font-size:11.5px;color:var(--mut);font-family:ui-monospace,Menlo,monospace;background:#0d1420;border:1px solid var(--line);border-radius:8px;padding:8px 12px;margin:8px 0;white-space:pre-wrap;word-break:break-word}
+.searchbox{width:100%;background:var(--panel);border:1px solid var(--line);border-radius:10px;color:var(--tx);padding:10px 14px;font-size:14px;margin:10px 0}
+.searchbox:focus{outline:none;border-color:var(--blue)}
+details{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 16px;margin:8px 0}
+summary{cursor:pointer;font-weight:600;color:var(--lt)}
+code{background:#0d1420;border:1px solid var(--line);border-radius:5px;padding:1px 6px;font-size:12px;color:#9ecbef}
+a{color:#7fb3ee}
+.nav{position:sticky;top:0;background:rgba(11,14,19,.95);backdrop-filter:blur(6px);z-index:5;padding:10px 0;border-bottom:1px solid var(--line);margin-bottom:18px}
+.nav a{margin-right:16px;font-size:12.5px;text-decoration:none}
+.hide{display:none!important}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>Contact Sources Audit — what Sendy, Hyros &amp; Close actually add to GHL</h1>
+<div class="sub">Built 2026-11-03 · every number below was computed live from the sources on this date · read-only, nothing imported ·
+companion to <a href="https://aicommerce-co.github.io/ghl-pipeline-expectations/">GHL Pipeline Expectations</a></div>
+
+<div class="tldr">
+<b>TL;DR</b> — Peter's "~300k not in GHL" is real and confirmed: <b>347,475 unique emails</b> across Sendy + the Hyros CSV are absent from GHL.
+The Sendy list 59 ("ALL hyros 300K leads minus ALL buyers", 293,750 subs) is <b>exactly a Hyros→Sendy import</b> — zero emails outside the Hyros CSV, no new intel.
+The Hyros CSV itself is the richer artifact (income_generated, stage, UTM/ad attribution per lead). The Sendy <b>master list adds 39,970 emails the Hyros CSV doesn't have</b> (265,529 new to GHL).
+The <b>Close export adds almost no new leads (865)</b> but carries buyer/DNC intel: 673 won opps, 842 DNC, 927 stop-automations, 109 customers — 16,536 of its 17,401 contacts are already in GHL.
+GHL today: 34,680 contacts, 6,253 buyer-tagged, <b>28,427 non-buyers</b> — Peter's "30k minus buyers" is close but slightly high.
+</div>
+
+<div class="nav">
+<a href="#sources">Sources</a><a href="#overlap">Overlap math</a><a href="#intel">Buyer / DNC intel</a><a href="#recommend">Import plan</a><a href="#method">Method &amp; evidence</a>
+</div>
+
+<h2 id="sources">The four sources</h2>
+<div class="grid">
+<div class="stat b"><div class="l">GHL (old loc 3n4109pfBDdwnHX60Agy)</div><div class="n">34,680</div><div class="l">contacts · 6,253 buyer-tagged · 28,427 non-buyers<br>+12,691 in new setters loc (8 unique to it)</div></div>
+<div class="stat p"><div class="l">Hyros export (Drive: SC LeadFi data)</div><div class="n">334,887</div><div class="l">hyros_leads.csv rows · 334,873 unique emails<br>cols: email, phone, name, join_date, stage, income_generated, first/last_source, tracked_url (fbclid/ad_id)</div></div>
+<div class="stat o"><div class="l">Sendy (Plesk box, sendy_db)</div><div class="n">374,272</div><div class="l">unique emails across the 5 relevant lists<br>biggest: L59 hyros-minus-buyers 293,750 · L53 master 266,751 · L3 all-leads 64,723 · L67 suppress 36,267 · L36 webinar-B 32,821</div></div>
+<div class="stat g"><div class="l">Close.com export (Drive, Oct 21)</div><div class="n">17,401</div><div class="l">contacts with email · 18,563 leads · 22,479 opps<br>678k activities in leads_full_with_activities.json.gz (dispute/chargeback record)</div></div>
+</div>
+
+<h2 id="overlap">Overlap math — what's genuinely new to GHL</h2>
+<table id="ovt">
+<thead><tr><th>Source / slice</th><th>Size</th><th>Already in GHL</th><th>NEW to GHL</th><th>What it adds</th></tr></thead>
+<tbody>
+<tr><td><b>Hyros CSV</b> (all rows)</td><td>334,873 emails</td><td>27,760</td><td class="pill p">~307,113</td><td>The big one. Full attribution (fbclid, ad_id, source, join_date, income).</td></tr>
+<tr><td>Hyros CSV → Sendy L59 ("minus ALL buyers")</td><td>293,750</td><td>22,615</td><td class="pill p">271,135</td><td><b>0 emails outside the Hyros CSV</b> — it's a pure Hyros→Sendy re-import. No new leads, no new intel vs the CSV.</td></tr>
+<tr><td><b>Sendy L53 master list</b></td><td>266,751</td><td>1,222</td><td class="pill p">265,529</td><td><b>39,970 emails NOT in the Hyros CSV</b> — genuine net-new source.</td></tr>
+<tr><td><b>Sendy L3 "All leads"</b></td><td>64,723</td><td>297</td><td class="pill p">64,426</td><td>9,969 emails not in the Hyros CSV.</td></tr>
+<tr><td><b>Sendy L67 VIR-2330 suppress</b> (non-SH + AiCom-AIMS buyers + DNC)</td><td>36,267</td><td>26,395</td><td>—</td><td><b>Intel, not leads</b>: buyer/DNC flags for people already in GHL.</td></tr>
+<tr><td><b>Sendy L36 webinar registrations-B</b></td><td>32,821</td><td>—</td><td class="pill p">most</td><td>Overlaps master list; adds webinar-engagement signal.</td></tr>
+<tr><td><b>Close.com export</b></td><td>17,401 emails</td><td>16,536</td><td class="pill o">865</td><td>Only 8 new vs <i>everything</i> combined. Value = statuses (see below).</td></tr>
+<tr><td><b>UNION of everything</b> (Sendy+Hyros+Close)</td><td>379,830</td><td>32,355</td><td class="pill p">347,475</td><td>Full new-to-GHL universe.</td></tr>
+</tbody>
+</table>
+<div class="verdict warn"><b>Answer to Peter's "30k leads, no?":</b> GHL today has 34,680 contacts; cutting the 6,253 buyer-tagged leaves <b>28,427</b> (+8 unique on the new loc → 28,435). Slightly under 30k. With the Sendy/Hyros universe imported it jumps to ~376k total, ~348k new.</div>
+
+<h2 id="intel">Buyer / DNC intel each source carries (beyond raw leads)</h2>
+<table>
+<thead><tr><th>Signal</th><th>Count</th><th>Where</th><th>Use for GHL import</th></tr></thead>
+<tbody>
+<tr><td>Hyros buyers (income_generated &gt; 0 or stage set)</td><td class="pill o">4,979 emails</td><td>hyros_leads.csv (hyros_sales.csv also in Drive)</td><td>Tag <code>hyros-buyer</code> on import; exclude from dialing pools. 4,455 of them are already GHL contacts → enrich those records.</td></tr>
+<tr><td>Hyros buyers NOT in GHL</td><td class="pill o">524</td><td>hyros_leads.csv</td><td>Import as buyers, never as dialable leads.</td></tr>
+<tr><td>Close won opportunities</td><td class="pill o">673 opps / 612 buyer emails</td><td>opportunities.csv.gz (status_type=won)</td><td>Tag <code>close-buyer</code>. 579 already in GHL → enrich; 29 buyers not in GHL.</td></tr>
+<tr><td>Close DNC + Stop Automations</td><td class="pill r">842 + 927</td><td>leads.csv.gz status_label</td><td>Must map to a suppress/⛔ tag — hard exclusion from any dialing pool.</td></tr>
+<tr><td>Close "Customer" leads</td><td class="pill o">109</td><td>leads.csv.gz</td><td>Buyer tag.</td></tr>
+<tr><td>Sendy L67 suppress (AiCom-AIMS buyers + DNC + non-SH)</td><td class="pill r">36,267 (26,395 in GHL)</td><td>sendy_db list 67</td><td>Cross-reference before importing anything: anyone on L67 must not land in a dialable pipeline.</td></tr>
+<tr><td>Sendy other buyer-ish lists</td><td class="pill o">~1,000</td><td>crypto buyers (19), 7FA Buyers (7), Paying customers-B (393), cf members-customers-non refunders (16), Canceled subscription (15)</td><td>Historical (pre-AiCom) buyer flags; low volume.</td></tr>
+</tbody>
+</table>
+<div class="verdict good"><b>Key insight:</b> the Sendy lists and Close export add almost no new <i>leads</i> beyond the Hyros CSV + master list — but they are the <b>buyer/DNC authority</b>. Any bulk import should import the union of emails, then stamp buyer/suppress tags from Hyros income, Close won/DNC, and Sendy L67 before anything enters a pipeline.</div>
+
+<h2 id="recommend">Recommended import plan (nothing executed yet — awaiting go)</h2>
+<details open><summary>Phase 0 — decisions needed (Peter / Pedro)</summary>
+<ul>
+<li>Import target: old loc (phone/SMS works there) vs new loc — recommend <b>old loc</b>, tagged, NOT auto-added to rep pipelines.</li>
+<li>Scope: Hyros CSV (307k new) + Sendy master-list-only extras (39,970)? Or full union (347,475)?</li>
+<li>Buyers: import as tagged-and-suppressed, or leave out entirely?</li>
+</ul></details>
+<details><summary>Phase 1 — mechanical import (agent-runnable)</summary>
+<ul>
+<li>Dedupe by email vs both GHL locations (27,760 already there — skip or enrich).</li>
+<li>Create contacts with: source=<code>hyros-import-2026-11</code> / <code>sendy-master-import</code>, tags: geo-* (from tracked_url/phone), <code>hyros-buyer</code> / <code>close-buyer</code> / <code>suppressed-l67</code> / <code>dnc</code> where applicable; UTM/ad_id into source fields &amp; note.</li>
+<li>Throughput: GHL API burst 100/10s, 200k/day → ~9–12 h checkpointed batch, or GHL UI CSV import (faster, fewer tags).</li>
+<li>Checkpoint state every ~10 items; skip @example.test; verify final count via API (worker DONE ≠ verification).</li>
+</ul></details>
+<details><summary>Phase 2 — pipeline gating</summary>
+<ul>
+<li>Rep dialing pipelines keep pulling only from tagged-lead pools; imported mass stays in a holding tag until Peter opts lists in.</li>
+<li>Re-applying buyers: add buyer-tag check to any auto-add worker so intentional re-applications get ⛔/💰-marked, not re-dialed (pending Peter's include-vs-exclude decision).</li>
+</ul></details>
+
+<h2 id="method">Method &amp; evidence (all run 2026-11-03, read-only)</h2>
+<div class="evi">GHL walk (old loc): GET /contacts/?locationId=3n4109pfBDdwnHX60Agy paginated via meta.nextPageUrl → 34,680 contacts; buyer union via explicit 18-tag buyer list → 6,253; new loc (8CFvPwzzvOVNsUwQbysG): 12,691 contacts, 5 buyer-tagged, 8 emails unique to it.
+Hyros: drive file 1LP9147yEfXRFpGFozg2KymBB3ffYsefd (SC LeadFi data shared drive) → 334,887 data rows, 334,873 unique emails; ∩ GHL old-loc = 27,760.
+Sendy: ssh 62.83.18.84 → mysql sendy_db → SELECT list,email FROM subscribers WHERE list IN (59,53,3,67,36) → 694,312 rows, 374,272 unique emails. L59−Hyros = 0 (subset); Hyros−L59 = 41,123 (the buyers).
+Close: drive folder close-export-2026-10-21 → contacts.csv.gz (17,401 emails), opportunities.csv.gz (22,479: 18,763 active / 673 won / 3,043 lost), leads.csv.gz (18,563 leads, top status 'Call Scheduled' 15,745).
+Union(Sendy5+Hyros) = 379,830; − GHL → 347,475 new.</div>
+<div class="evi">Artefacts persisted: /home/pedro/.hermes/ghl-sync/{oldloc_emails.json, oldloc_buyer_ids.json, newloc_emails.json, sendy_email_lists.json, close_emails.json, close_won_emails.json, new_emails_all_sources.json} · /tmp/hyros_leads.csv · /tmp/close_*.csv.gz</div>
+<div class="verdict info">Nothing was written to GHL, Sendy, or Drive during this audit. All operations were GETs / SELECTs / downloads.</div>
+
+<p class="sub" style="margin-top:30px">Interactive: click column headers to sort · all counts are unique-email based unless noted · buyer "union" = ≥1 of the 18 explicit buyer tags (aud26 suppress, buyers-and-clients, source-hacker-buyer, purchase*, paying-customers*, aicom aims buyer, $1dollarbuyer, cb purchasers, mfm-buyer, shs mini purchase).</p>
+</div>
+<script>
+document.querySelectorAll('#ovt th').forEach((th,i)=>{th.addEventListener('click',()=>{
+const tb=th.closest('table').querySelector('tbody');const rows=[...tb.rows];const asc=th.dataset.asc!=='1';th.dataset.asc=asc?'1':'0';
+rows.sort((a,b)=>{const x=a.cells[i].innerText.replace(/[^\d,.-]/g,'').replace(/,/g,'');const y=b.cells[i].innerText.replace(/[^\d,.-]/g,'').replace(/,/g,'');const nx=parseFloat(x),ny=parseFloat(y);if(!isNaN(nx)&&!isNaN(ny))return asc?nx-ny:ny-nx;return asc?a.cells[i].innerText.localeCompare(b.cells[i].innerText):b.cells[i].innerText.localeCompare(a.cells[i].innerText);});
+rows.forEach(r=>tb.appendChild(r));});});
+// simple search highlight/filter over table rows
+const sb=document.createElement('input');sb.className='searchbox';sb.placeholder='Filter rows (e.g. "sendy", "buyer", "close")…';
+const ovt=document.getElementById('ovt');ovt.parentNode.insertBefore(sb,ovt);
+sb.addEventListener('input',()=>{const q=sb.value.toLowerCase();[...ovt.querySelectorAll('tbody tr')].forEach(r=>{r.classList.toggle('hide',q&&!r.innerText.toLowerCase().includes(q));});});
+</script>
+</body>
+</html>
